@@ -11,8 +11,7 @@ import java.awt.image.DataBufferInt;
 
 import javax.swing.JFrame;
 
-import com.projects.riderj.gfx.Colors;
-import com.projects.riderj.gfx.Font;
+import com.projects.riderj.entity.Player;
 import com.projects.riderj.gfx.Screen;
 import com.projects.riderj.gfx.SpriteSheet;
 import com.projects.riderj.level.Level;
@@ -33,6 +32,7 @@ public class Game extends Canvas implements Runnable{
 	private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 	public int[]colors = new int[6*6*6];
 	private int frames = 0;
+	public Player player;
 	
 	
 	private Screen screen;
@@ -79,7 +79,10 @@ public class Game extends Canvas implements Runnable{
 		}
 		screen = new Screen(WIDTH,HEIGHT,new SpriteSheet("/sprites1.png"));
 		input = new InputHandler(this);
+		player = new Player(level,5,5,input);
 		level = new Level(64,64);
+		
+		level.addEntity(player);
 	}
 	private synchronized void start() {
 		running = true;
@@ -140,10 +143,7 @@ public class Game extends Canvas implements Runnable{
 		tickCount++;
 
 		//System.out.println(pixels.length); pixel length is Width*Height
-		if(input.up.isPressed()) y--;
-		if(input.down.isPressed()) y++;
-		if(input.left.isPressed()) x--;
-		if(input.right.isPressed()) x++;
+
 		
 		level.tick();
 	}
@@ -162,10 +162,12 @@ public class Game extends Canvas implements Runnable{
 		String msg = "This is our game!";
 		//Font.render(msg, screen,screen.xOffset + screen.width/2 - (msg.length()*8)/2,screen.yOffset + screen.height/2 - 4, Colors.get(000, 000, 000, 500));
 		
-		int xOffset = x - (screen.width/2);
-		int yOffset = y - (screen.height/2);
+		int xOffset = player.x - (screen.width/2);
+		int yOffset = player.y - (screen.height/2);
 		
 		level.renderTiles(screen, xOffset, yOffset);
+		
+		level.renderEntities(screen);
 		
 		//Font.render("Adam likes milfs", screen, screen.xOffset, screen.yOffset, Colors.get(-1,-1,-1,005));
 		
