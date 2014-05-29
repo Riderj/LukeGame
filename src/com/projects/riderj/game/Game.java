@@ -15,6 +15,8 @@ import com.projects.riderj.entity.Player;
 import com.projects.riderj.gfx.Screen;
 import com.projects.riderj.gfx.SpriteSheet;
 import com.projects.riderj.level.Level;
+import com.projects.riderj.menu.BasicGui;
+import com.projects.riderj.menu.TestMenu;
 
 public class Game extends Canvas implements Runnable{
 
@@ -33,7 +35,7 @@ public class Game extends Canvas implements Runnable{
 	public int[]colors = new int[6*6*6];
 	private int frames = 0;
 	public Player player;
-	
+	public BasicGui menu;
 	
 	private Screen screen;
 	
@@ -79,8 +81,9 @@ public class Game extends Canvas implements Runnable{
 		}
 		screen = new Screen(WIDTH,HEIGHT,new SpriteSheet("/sprites1.png"));
 		input = new InputHandler(this);
-		player = new Player(level,5,5,input);
 		level = new Level(64,64);
+		player = new Player(level,10, 10,input);
+		menu = new TestMenu(screen,0, 0, 10, 5);
 		
 		level.addEntity(player);
 	}
@@ -141,9 +144,12 @@ public class Game extends Canvas implements Runnable{
 	private int x = 0, y = 0;
 	public void tick() {
 		tickCount++;
-
+		
 		//System.out.println(pixels.length); pixel length is Width*Height
-
+		if(menu != null) {
+			menu.tick();
+		}
+		
 		
 		level.tick();
 	}
@@ -168,6 +174,10 @@ public class Game extends Canvas implements Runnable{
 		level.renderTiles(screen, xOffset, yOffset);
 		
 		level.renderEntities(screen);
+		
+		if(menu != null) {
+			menu.render(screen);
+		}
 		
 		//Font.render("Adam likes milfs", screen, screen.xOffset, screen.yOffset, Colors.get(-1,-1,-1,005));
 		
